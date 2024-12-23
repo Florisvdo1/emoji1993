@@ -1,0 +1,236 @@
+/* ==========================================================================
+   REFINED "1-BILLION-DOLLAR" DESIGN
+   Includes:
+   - Center carousel w/ 50% baby-blue, 50% transparent
+   - Arcade claw handle (red ball, silver pixel line)
+   - Double-tap removal, Homework toggle w/ confetti
+   - Pixel-art style background (#9ce0e9, #a1d5ed, #55bedb, #177bacac)
+   - No scroll/zoom overflow
+========================================================================== */
+
+/* -- Globals & Locking -- */
+html, body {
+  margin: 0; padding: 0; 
+  width: 100%; height: 100%;
+  overflow: hidden; /* We'll scroll in .main-content only */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Pixel-art background (Habbo-like) w/ #9ce0e9 main color */
+.pixel-art-background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: #9ce0e9;
+  z-index: -1;
+  pointer-events: none;
+  /* Simulate pixel-art clouds floating, using multiple layers or keyframes */
+  background-image: 
+    /* Cloud1 */ radial-gradient(12px 8px at 10% 20%, #a1d5ed, transparent 50%),
+    /* Cloud2 */ radial-gradient(16px 10px at 80% 35%, #55bedb, transparent 60%),
+    /* Cloud3 */ radial-gradient(20px 14px at 40% 60%, #177bacac, transparent 70%);
+  background-repeat: repeat;
+  animation: floatClouds 20s linear infinite;
+}
+@keyframes floatClouds {
+  0%   { background-position: 0 0; }
+  100% { background-position: 100px 50px; }
+}
+
+/* Header */
+.app-header {
+  display: flex;
+  justify-content: space-evenly; /* center them across header */
+  align-items: center;
+  padding: 0.6rem 0.4rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+}
+.header-btn {
+  background: linear-gradient(135deg, #ffffff, #eeeeee);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.header-btn:hover {
+  background: linear-gradient(135deg, #ffffff, #ffffff);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+}
+/* Homework button in red, slightly bigger */
+.homework-btn {
+  background: linear-gradient(135deg, #ff4444, #ff8888);
+  font-size: 1rem;
+  padding: 0.5rem 1.2rem;
+}
+
+/* Carousel viewport */
+.carousel-viewport {
+  display: flex;
+  justify-content: center;
+  perspective: 1000px;
+  margin-bottom: 10px; 
+}
+.carousel-stage {
+  width: 100%;
+  max-width: 900px;
+  height: 300px;
+  transform-style: preserve-3d;
+  position: relative;
+}
+/* Sectors: morning (left), midday (center), evening (right) */
+.sector {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 280px; height: 220px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(255,255,255,0.2);
+  transform: translate(-50%, -50%) rotateY(0) scale(1);
+  transition: transform 0.7s cubic-bezier(0.25,0.8,0.25,1),
+              opacity 0.7s;
+  opacity: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 5; /* behind the center by default */
+}
+.sector.active.center {
+  /* 50% baby-blue, 50% transparent */
+  background: linear-gradient(135deg,
+              rgba(173, 216, 230, 0.5) 50%,
+              rgba(255,255,255,0) 50%);
+  opacity: 1; 
+  z-index: 99; 
+  transform: translate(-50%, -50%) rotateY(0) scale(1);
+}
+.sector.left {
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+  opacity: 0.85; 
+  transform: translate(-50%, -50%) rotateY(30deg) translateX(-180px) translateY(10px) scale(0.9);
+}
+.sector.right {
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+  opacity: 0.85; 
+  transform: translate(-50%, -50%) rotateY(-30deg) translateX(180px) translateY(10px) scale(0.9);
+}
+
+/* Placeholders */
+.placeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  grid-template-rows: repeat(2,1fr);
+  gap: 0.6rem;
+}
+.placeholder {
+  width: 60px; height: 60px;
+  border-radius: 12px;
+  background: radial-gradient(circle, rgba(255,255,255,0.7), rgba(255,255,255,0.2));
+  border: 2px solid rgba(255,255,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  color: #333;
+  box-shadow: inset 0 0 8px rgba(255,255,255,0.3), 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* main-content (vertical scroller) */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: -6px; /* just a small negative margin */
+  padding: 1rem 0.8rem;
+  position: relative;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(4px);
+  border-top-left-radius: 20px; border-top-right-radius: 20px;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.1) inset;
+}
+
+/* Arcade Claw Handle for scrolling (red ball + silver pixel line) */
+.arcade-claw-handle {
+  display: flex; flex-direction: column; align-items: center;
+  margin: 0 auto 1rem auto; 
+}
+.claw-top-ball {
+  width: 16px; height: 16px;
+  background: radial-gradient(circle at 30% 30%, red, #aa0000);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.claw-line {
+  width: 2px; height: 40px;
+  background: repeating-linear-gradient(
+    to bottom,
+    silver 0px,
+    silver 2px,
+    #ccc 2px,
+    #ccc 4px
+  );
+  box-shadow: 0 0 1px rgba(0,0,0,0.5);
+}
+
+/* Category labels in baby-blue, centered */
+h2 {
+  text-align: center;
+  color: #87CEFA; /* baby-blue-ish */
+  margin-top: 0.8rem; margin-bottom: 0.4rem;
+  font-weight: bold;
+}
+
+/* Emoji grid + items */
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 6px;
+  margin-bottom: 1.5rem;
+}
+.emoji-item {
+  font-size: 1.6rem;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 8px;
+  transition: transform 0.2s;
+  position: relative;
+}
+.emoji-item:active {
+  transform: scale(1.2);
+}
+
+/* Dragging pinned under finger */
+.emoji-item.dragging {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+/* Reset Overlay */
+.reset-overlay {
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background: rgba(173,216,230,0.4); /* baby-blue overlay */
+  display: flex; align-items: center; justify-content: center;
+}
+.reset-overlay.hidden {
+  display: none;
+}
+.reset-overlay-content {
+  background: #fff; padding: 2rem; border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Confetti container for homework toggle */
+.confetti-container {
+  position: fixed; 
+  top: 0; left: 0; 
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden; 
+  z-index: 200; /* above everything */
+}
+.confetti-container.hidden {
+  display: none;
+}
+
+/* No extra code outside viewport => we keep everything bounded */

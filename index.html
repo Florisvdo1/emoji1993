@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Lock viewport (no pinch-zoom) -->
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0, user-scalable=no, 
+             maximum-scale=1, minimum-scale=1"/>
+  <title>Refined 1-Billion-Design Planner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Header with Homework Toggle -->
+  <header class="app-header">
+    <button id="btnReset" class="header-btn">Reset</button>
+    <button id="btnHomework" class="header-btn homework-btn">Homework ❗</button>
+    <button id="btnSave" class="header-btn">Save</button>
+  </header>
+
+  <!-- Pixel-art style background (Habbo-like) + baby-blue (#9ce0e9) -->
+  <div class="pixel-art-background"></div>
+  
+  <!-- 3D Carousel -->
+  <div class="carousel-viewport">
+    <div class="carousel-stage">
+      <!-- Morning (left) -->
+      <div class="sector left" id="morningSect" data-day="morning">
+        <div class="placeholder-grid">
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+        </div>
+      </div>
+      <!-- Midday (center) with 50% baby-blue, 50% transparent -->
+      <div class="sector active center" id="middaySect" data-day="midday">
+        <div class="placeholder-grid">
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+        </div>
+      </div>
+      <!-- Evening (right) -->
+      <div class="sector right" id="eveningSect" data-day="evening">
+        <div class="placeholder-grid">
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+          <div class="placeholder"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main scrollable deck area, includes the "arcade claw" handle -->
+  <div class="main-content" id="mainContent">
+    <!-- Arcade claw scroll handle (red ball + silver line) -->
+    <div class="arcade-claw-handle">
+      <div class="claw-top-ball"></div>
+      <div class="claw-line"></div>
+    </div>
+    <!-- Category deck / emojis inserted here by app.js -->
+  </div>
+
+  <!-- Light overlay for reset? -->
+  <div id="resetOverlay" class="reset-overlay hidden">
+    <div class="reset-overlay-content">
+      <p>Resetting, please wait...</p>
+    </div>
+  </div>
+
+  <!-- Confetti container (for Homework toggle) -->
+  <div id="confettiContainer" class="confetti-container hidden"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
